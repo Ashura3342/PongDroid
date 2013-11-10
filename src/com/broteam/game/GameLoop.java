@@ -36,8 +36,8 @@ public abstract class GameLoop implements Runnable {
 		running = false;
 	}
  
-	protected void initGame(Context context) {
-		this.screen = new GameView(context, this);
+	public void initGame(Context context) {
+		this.screen = new GameView(context);
 	}
 	
 	public void start() {

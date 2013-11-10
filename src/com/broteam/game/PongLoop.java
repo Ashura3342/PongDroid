@@ -32,7 +32,7 @@ public class PongLoop extends GameLoop {
 
 	@Override
 	public void initBefore() {
-		ball = new Ball(screen.width / 2, screen.height / 2, 0, 2, screen);
+		ball = new Ball(screen.width / 2, screen.height / 2, -0.5f, 1, screen);
 		raqTop = new Raquet(screen.width / 2 + Raquet.WIDTH / 2, Raquet.HEIGHT / 2 + 10, true, screen);
 		raqBot = new Raquet(screen.width / 2 + Raquet.WIDTH / 2, screen.height - Raquet.HEIGHT / 2 - 10, false, screen);
 		gameObject.add(raqTop);
@@ -40,6 +40,7 @@ public class PongLoop extends GameLoop {
 		gameObject.add(ball);
 		ball.addObject(raqTop);
 		ball.addObject(raqBot);
+		ball.addObject(screen.getScene());
 	}
 	
 	@Override

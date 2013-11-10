@@ -13,7 +13,7 @@ import android.graphics.Paint;
  * @author giallo_n
  *
  */
-public class Raquet extends GameObject implements ActivateColision {
+public class Raquet extends AbstractGameObject implements ActivateColision {
 
 	public static final int WIDTH = 100;
 	public static final int HEIGHT = 10;
@@ -33,8 +33,7 @@ public class Raquet extends GameObject implements ActivateColision {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-		
+		//on peut gere le deplacement de la raquete par colision si on veut
 	}
 
 	@Override
@@ -45,11 +44,11 @@ public class Raquet extends GameObject implements ActivateColision {
 	@Override
 	public boolean isColision(GameObject ball) {
 		if (ball.getX() >= (getX() - getWidth() / 2) && ball.getX() <= (getX() + getWidth() / 2))
-		{
-				if (isTop)
-					return (ball.getY() < getY() + getHeight());
-				else		
-					return (ball.getY() > getY() - getHeight());
+		{	
+			if (isTop)
+				return (ball.getY() < getY() + getHeight());
+			else		
+				return (ball.getY() > getY() - getHeight());
 		}else
 			return false;
 	}

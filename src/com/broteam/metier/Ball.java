@@ -14,13 +14,15 @@ import android.util.Log;
  * @author giallo_n
  *
  */
-public class Ball extends GameObject implements ActivateColision {
+public class Ball extends AbstractGameObject implements ActivateColision {
 
 	private float angleIncidence = 0;
 	public static final int WIDTH = 10;
 	public static final int HEIGHT = 10;
+	public static final int SPEED_BALL = 8;
 	private float vx;
 	private float vy;
+	private float coef;
 	
 	/**
 	 * @param x
@@ -32,6 +34,8 @@ public class Ball extends GameObject implements ActivateColision {
 		super(x, y, WIDTH, HEIGHT, new Paint(), screen);
 		this.vx = vx;
 		this.vy = vy;
+		this.coef = 1;
+		calcCoef();
 		paint.setColor(Color.GREEN);
 	}
 
@@ -40,9 +44,16 @@ public class Ball extends GameObject implements ActivateColision {
 	 */
 	@Override
 	public void answerColision(GameObject go) {
-		Log.d("Ball", "colision raquete "+((((Raquet)go).isTop()) ? "top" : "bas")
-				+" ("+((Raquet)go).getX()+", "+((Raquet)go).getY()+")"
-				+" en ("+getX()+", "+getY()+")");
+		if (go.getClass().equals(Raquet.class)) {
+			Log.d("Ball", "colision raquete "+((((Raquet)go).isTop()) ? "top" : "bas")
+					+ " ("+go.getX()+", "+go.getY()+")"
+					+ " en ("+getX()+", "+getY()+")");
+		}else if (go.getClass().equals(Scene.class)) {
+			Log.d("Ball", "colision Scene "
+					+ " ("+go.getX()+", "+go.getY()+")"
+					+ " de ("+go.getWidth()+", "+go.getHeight()+")"
+					+ " en ("+getX()+", "+getY()+")");
+		}
 		calcSpeedVector(go);
 	}
 
@@ -54,10 +65,11 @@ public class Ball extends GameObject implements ActivateColision {
 		for (ActivateColision ac : objects) {
 				if(ac.isColision(this)) {
 					this.answerColision((GameObject)ac);
+					ac.answerColision(this);
 				}
 		}
-		x = x + vx;
-		y = y + vy;
+		x += vx * coef;
+		y += vy * coef;
 	}
 
 	/* (non-Javadoc)
@@ -78,18 +90,15 @@ public class Ball extends GameObject implements ActivateColision {
 		return false;
 	}
 
-	public void calcSpeedVector(GameObject go) {
-		if (go.getClass().equals(Raquet.class)) {
-			if (vy >= 20)
-				vy  = -20;
-			else if (vy <= -20)
-				vy = 20;
-			else
-				vy = -vy * 1.5f;
-			Log.d("Ball", "change vecteur y "+vy);
-		}else{
-			vx = -vx * Math.abs(vx);
-			Log.d("Ball", "change vecteur x "+vx);
-		}
+	public void calcCoef() {
+		float speed = (float) (coef * Math.sqrt(Math.pow((float) vx, 2) + Math.pow((float)vx, 2)));
+		coef *= SPEED_BALL / speed;
+	}
+	public void calcSpeedVector(GameObject go) { 
+		calcCoef();
+		if (go.getClass().equals(Raquet.class))
+			vy = -vy;
+		else
+			vx = -vx;
 	}
 }

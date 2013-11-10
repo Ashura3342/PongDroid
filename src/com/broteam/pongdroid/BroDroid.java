@@ -1,5 +1,6 @@
 package com.broteam.pongdroid;
 
+import com.broteam.factory.FactoryGame;
 import com.broteam.game.PongLoop;
 
 import android.os.Bundle;
@@ -18,8 +19,7 @@ public class BroDroid extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
         		WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        game = new PongLoop();  
-        game.initGame(this);
+        game = (PongLoop) FactoryGame.getGame(this);
         setContentView(game.getScreen());
 	}
 	

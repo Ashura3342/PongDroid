@@ -3,10 +3,15 @@
  */
 package com.broteam.game;
 
+import com.broteam.factory.FactoryGame;
+import com.broteam.metier.Scene;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
+import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -19,21 +24,39 @@ import android.view.SurfaceView;
 public class GameView extends SurfaceView implements Callback {
 	public int width;	
 	public int height;
+	private Scene scene;
 	public GameLoop gameLoop;
 	private Bitmap buffer;
 	private Canvas canvas;
 	private SurfaceHolder holder;
 	
+	
+	public GameView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		this.gameLoop = FactoryGame.getGame(context);
+		holder = getHolder();
+		holder.addCallback(this);
+	}
+
 	/**
 	 * @param context
 	 */
-	public GameView(Context context, GameLoop gameLoop) {
+	public GameView(Context context) {
 		super(context);
-		this.gameLoop = gameLoop;
+		this.gameLoop = FactoryGame.getGame(context);
 		holder = getHolder();
 		holder.addCallback(this);
 	}
 	
+	
+	
+	public GameView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		this.gameLoop = FactoryGame.getGame(context);
+		holder = getHolder();
+		holder.addCallback(this);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.view.View#invalidate()
@@ -66,6 +89,7 @@ public class GameView extends SurfaceView implements Callback {
 			int height) {
 		this.width = width;
 		this.height = height;
+		this.scene = new Scene(0, 0, width, height, new Paint(), this);
 		this.buffer = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 		this.canvas = new Canvas(buffer);
 		gameLoop.start();
@@ -87,5 +111,9 @@ public class GameView extends SurfaceView implements Callback {
 
 	public Canvas getCanvas() {
 		return canvas;
+	}
+	
+	public Scene getScene() {
+		return scene;
 	}
 }
