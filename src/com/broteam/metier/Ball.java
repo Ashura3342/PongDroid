@@ -17,8 +17,7 @@ import android.util.Log;
 public class Ball extends AbstractGameObject implements ActivateColision {
 
 	private float angleIncidence = 0;
-	public static final int WIDTH = 10;
-	public static final int HEIGHT = 10;
+	public static final int COEF_RAYON = 45;
 	public static final int SPEED_BALL = 8;
 	private float vx;
 	private float vy;
@@ -31,7 +30,8 @@ public class Ball extends AbstractGameObject implements ActivateColision {
 	 * @param height
 	 */
 	public Ball(float x, float y, float vx, float vy, GameView screen) {
-		super(x, y, WIDTH, HEIGHT, new Paint(), screen);
+		super(x + screen.width / (2 * COEF_RAYON), y + screen.width /( 2 * COEF_RAYON), 
+				screen.width / COEF_RAYON, screen.width / COEF_RAYON, new Paint(), screen);
 		this.vx = vx;
 		this.vy = vy;
 		this.coef = 1;
@@ -64,8 +64,8 @@ public class Ball extends AbstractGameObject implements ActivateColision {
 	public void update() {
 		for (ActivateColision ac : objects) {
 				if(ac.isColision(this)) {
-					this.answerColision((GameObject)ac);
 					ac.answerColision(this);
+					answerColision((GameObject)ac);
 				}
 		}
 		x += vx * coef;
@@ -94,11 +94,21 @@ public class Ball extends AbstractGameObject implements ActivateColision {
 		float speed = (float) (coef * Math.sqrt(Math.pow((float) vx, 2) + Math.pow((float)vx, 2)));
 		coef *= SPEED_BALL / speed;
 	}
+	
 	public void calcSpeedVector(GameObject go) { 
 		calcCoef();
-		if (go.getClass().equals(Raquet.class))
+		if (go.getClass().equals(Raquet.class) )
 			vy = -vy;
 		else
 			vx = -vx;
 	}
+
+	public float getCoef() {
+		return coef;
+	}
+
+	public void setCoef(float coef) {
+		this.coef = coef;
+	}
+	
 }

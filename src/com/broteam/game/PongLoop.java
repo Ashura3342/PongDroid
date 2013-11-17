@@ -7,10 +7,8 @@ import com.broteam.metier.Ball;
 import com.broteam.metier.GameObject;
 import com.broteam.metier.Raquet;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.view.MotionEvent;
 
 /**
@@ -23,9 +21,7 @@ public class PongLoop extends GameLoop {
 	private Raquet raqTop;
 	private Raquet raqBot;
 	private Ball ball;
-	/**
-	 * 
-	 */
+	
 	public PongLoop() {
 		super(TIME);
 	}
@@ -33,14 +29,17 @@ public class PongLoop extends GameLoop {
 	@Override
 	public void initBefore() {
 		ball = new Ball(screen.width / 2, screen.height / 2, -0.5f, 1, screen);
-		raqTop = new Raquet(screen.width / 2 + Raquet.WIDTH / 2, Raquet.HEIGHT / 2 + 10, true, screen);
-		raqBot = new Raquet(screen.width / 2 + Raquet.WIDTH / 2, screen.height - Raquet.HEIGHT / 2 - 10, false, screen);
+		raqTop = new Raquet(screen.width /2, 
+				10 + screen.height / (2 * Raquet.COEF_HEIGHT), true, screen);
+		raqBot = new Raquet(screen.width / 2, 
+				screen.height - 10 - screen.height / (2 * Raquet.COEF_HEIGHT), false, screen);
 		gameObject.add(raqTop);
 		gameObject.add(raqBot);
 		gameObject.add(ball);
+		gameObject.add(screen.getScene());
+		ball.addObject(screen.getScene()); 
 		ball.addObject(raqTop);
 		ball.addObject(raqBot);
-		ball.addObject(screen.getScene());
 	}
 	
 	@Override
@@ -52,10 +51,7 @@ public class PongLoop extends GameLoop {
 
 	@Override
 	public void render(Canvas canvas) {
-		Paint paint = new Paint();
 		canvas.drawColor(Color.BLACK);
-		paint.setColor(Color.BLUE);
-		canvas.drawLine(0, screen.height / 2, screen.width, screen.height / 2, paint);
 		for(GameObject go : gameObject) {
 			go.render(canvas);
 		}
@@ -65,32 +61,32 @@ public class PongLoop extends GameLoop {
 	@Override
 	public void processEvent() {
 		if (motionEvent != null) {
-		if(motionEvent.getPointerCount() > 1) {
-					if (motionEvent.getAction() == MotionEvent.ACTION_MOVE 
-							&& motionEvent.getActionMasked() != MotionEvent.ACTION_DOWN) {
-						if (motionEvent.getX(0) < screen.height / 2 &&
-								motionEvent.getX(1) >= screen.height / 2 ) {
-							raqTop.setX(motionEvent.getX(0));
-							raqBot.setX(motionEvent.getX(1));
-						}else if (motionEvent.getX(1) < screen.height / 2 &&
-								motionEvent.getX(0) >= screen.height / 2 ) {
-							raqTop.setX(motionEvent.getX(1));
-							raqBot.setX(motionEvent.getX(0));
-						}	
-					}
-			}else {
-				if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-					if (motionEvent.getY() < screen.height / 2) {
-						raqTop.setX(motionEvent.getX());
-					}else {
-						raqBot.setX(motionEvent.getX());
-					}
-				}
+			if (motionEvent.getPointerCount() == 1)
+				singleTouch(motionEvent);
+			else if (motionEvent.getPointerCount() == 2) {
+				multiTouch(motionEvent);
 			}
 		}
 	}
 	
-	public void initGame(Context context){
-		super.initGame(context);
+	public void singleTouch(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			if (event.getY() >= screen.height / 2)
+				raqBot.setX(event.getX());
+			else
+				raqTop.setX(event.getX());
+		}
+	}
+	
+	public void multiTouch(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			if (event.getY(0) >= screen.getHeight() / 2 && event.getY(1) < screen.getHeight() / 2)  {
+				raqBot.setX(event.getX(0));
+				raqTop.setX(event.getX(1));
+			}else if (event.getY(1) >= screen.getHeight() / 2 && event.getY(0) < screen.getHeight() / 2) {
+				raqBot.setX(event.getX(1));
+				raqTop.setX(event.getX(0));
+			}
+		}
 	}
 }

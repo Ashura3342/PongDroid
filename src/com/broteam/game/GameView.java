@@ -3,7 +3,6 @@
  */
 package com.broteam.game;
 
-import com.broteam.factory.FactoryGame;
 import com.broteam.metier.Scene;
 
 import android.content.Context;
@@ -33,7 +32,6 @@ public class GameView extends SurfaceView implements Callback {
 	
 	public GameView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		this.gameLoop = FactoryGame.getGame(context);
 		holder = getHolder();
 		holder.addCallback(this);
 	}
@@ -43,7 +41,6 @@ public class GameView extends SurfaceView implements Callback {
 	 */
 	public GameView(Context context) {
 		super(context);
-		this.gameLoop = FactoryGame.getGame(context);
 		holder = getHolder();
 		holder.addCallback(this);
 	}
@@ -52,7 +49,6 @@ public class GameView extends SurfaceView implements Callback {
 	
 	public GameView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		this.gameLoop = FactoryGame.getGame(context);
 		holder = getHolder();
 		holder.addCallback(this);
 	}
@@ -92,6 +88,8 @@ public class GameView extends SurfaceView implements Callback {
 		this.scene = new Scene(0, 0, width, height, new Paint(), this);
 		this.buffer = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 		this.canvas = new Canvas(buffer);
+		gameLoop = new PongLoop();
+		gameLoop.initGame(this);
 		gameLoop.start();
 	}
 
@@ -107,6 +105,9 @@ public class GameView extends SurfaceView implements Callback {
 	 */
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		while (gameLoop.alive()) {
+        	gameLoop.stop();
+        }
 	}
 
 	public Canvas getCanvas() {

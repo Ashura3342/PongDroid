@@ -6,7 +6,6 @@ package com.broteam.game;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
@@ -36,12 +35,14 @@ public abstract class GameLoop implements Runnable {
 		running = false;
 	}
  
-	public void initGame(Context context) {
-		this.screen = new GameView(context);
+	public void initGame(GameView view) {
+		screen = view;
 	}
 	
 	public void start() {
 		if (!running) {
+			if (thread.getState() == Thread.State.TERMINATED)
+				thread = new Thread(this, tag);
 			running = true;
 			initBefore();
 			thread.start();
@@ -51,11 +52,6 @@ public abstract class GameLoop implements Runnable {
 	public void stop() {
 		if (running) {
 			running = false;
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	
@@ -104,4 +100,17 @@ public abstract class GameLoop implements Runnable {
 	public abstract void update();
 	public abstract void render(Canvas canvas);
 	public abstract void initBefore();
+
+	public void join() {
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public boolean alive() {
+		return thread.isAlive();
+	}
 }

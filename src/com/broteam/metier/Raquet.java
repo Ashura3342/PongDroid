@@ -15,8 +15,8 @@ import android.graphics.Paint;
  */
 public class Raquet extends AbstractGameObject implements ActivateColision {
 
-	public static final int WIDTH = 100;
-	public static final int HEIGHT = 10;
+	public static final int COEF_WIDTH = 3;
+	public static final int COEF_HEIGHT = 60;
 	private boolean isTop;
 	
 	/**
@@ -26,14 +26,14 @@ public class Raquet extends AbstractGameObject implements ActivateColision {
 	 * @param height
 	 */
 	public Raquet(float x, float y, boolean isTop, GameView screen) {
-		super(x, y, screen.width / 4, HEIGHT, new Paint(), screen);
+		super(x, y , screen.width / COEF_WIDTH , screen.height / COEF_HEIGHT, new Paint(), screen);
 		paint.setColor(Color.WHITE);
 		this.isTop = isTop;
 	}
 
 	@Override
 	public void update() {
-		//on peut gere le deplacement de la raquete par colision si on veut
+		//nothing
 	}
 
 	@Override
@@ -67,5 +67,4 @@ public class Raquet extends AbstractGameObject implements ActivateColision {
 	public void answerColision(GameObject go) {
 		//nothing
 	}
-
 }
